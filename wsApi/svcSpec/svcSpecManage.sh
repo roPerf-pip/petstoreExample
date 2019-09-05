@@ -131,6 +131,8 @@ $( examplesSeperatorSection "Obtain And Update Service Specification -- ${svcNam
 ${G_myName} ${extraInfo} -p svcSpecUrl="${svcSpecDefaultUrl}" -i svcSpecObtain ${svcFullName}
 ${G_myName} ${extraInfo} -i svcSpecUpdate ${svcFullName}
 ${G_myName} ${extraInfo} -p svcSpecUrl="${svcSpecDefaultUrl}" -i svcSpecObtainUpdate ${svcFullName}
+$( examplesSeperatorSection "Validate Service Specification -- ${svcName}-${svcVersion}" )
+swagger-cli validate ${svcName}-${svcVersion}-obtained.json
 $( examplesSeperatorSection "Visit Swagger UI -- ${svcName}-${svcVersion}" )
 bx-firefox ${svcSwaggerUiUrl}
 _EOF_
@@ -168,7 +170,7 @@ _EOF_
 
     local outputFile="${svcName}-obtained.json"
 
-    lpDo wget --output-document=${outputFile} ${svcSpecUrl}        
+    lpDo wget --no-check-certificate --output-document=${outputFile} ${svcSpecUrl}        
 
     lpReturn
 }
@@ -188,7 +190,8 @@ _EOF_
     local outputFile="${svcName}-obtained.json"
     local outputFileYaml="${svcName}-obtained.yaml"    
     local outputFileFormatted="${svcName}-formatted.json"
-    
+    local outputFileDerefed="${svcName}-deref.json"    
+
     if [ ! -f "${outputFile}" ] ; then
 	EH_problem "Missing obtained file = ${outputFile}"
 	EH_problem "First Run: ${G_myName} -i someSvcSpecObtain"
@@ -197,7 +200,10 @@ _EOF_
 
     lpDo eval json2yaml "${outputFile}" \> "${outputFileYaml}"
 
-    lpDo eval jsonlint-py -f "${outputFile}" \> "${outputFileFormatted}"    
+    # Use swager-cli instead of jq perhaps.
+    lpDo eval cat  "${outputFile}" \| jq . \> "${outputFileFormatted}"
+
+    lpDo swagger-cli bundle -dereference --outfile "${outputFileDerefed}" "${outputFile}"
 
     lpReturn
 }

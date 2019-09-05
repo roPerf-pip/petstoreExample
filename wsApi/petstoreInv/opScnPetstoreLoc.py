@@ -341,7 +341,7 @@ class examples(icm.Cmnd):
         # ../unisos/mmwsIcm-base/opScn-1.py
 
         #opScn1="{pkgBaseDir}/opScn-1.py".format(pkgBaseDir=icmsPkgInfoBaseDir)
-	opScn1="./opScn-1.py"
+        opScn1="./opScn-1.py"
         
         execLineEx("""ln -s {pkgBaseDir}/opScenarios.py opScenarios.py""".format(pkgBaseDir=icmsPkgInfoBaseDir))
         execLineEx("""ln -s {pkgBaseDir}/opScnrioExpect.py opScnrioExpect.py""".format(pkgBaseDir=icmsPkgInfoBaseDir))        
